@@ -13,7 +13,11 @@ app.get("/api", (rq, rs) => {
 
 app.post("/api", (rq, rs) => {
   const {title, description, url, ...rest} = rq.body
-  if(Object.keys(rest).length !== 0 || !title || !description || !url) return rs.send({status: "fail"})
+  if(Object.keys(rest).length !== 0 || !title || !description || !url)
+    return rs.send({
+      status: "fail",
+      reason: "Keys title, description, url required; no more than that"
+    })
 
   const len = projects.length
   projects.push({
@@ -22,7 +26,10 @@ app.post("/api", (rq, rs) => {
   })
 
   fs.writeFile("./projects.json5", JSON.stringify(projects), err => {
-    if(err) return rs.send(err)
+    if(err) return rs.send({
+      status: "fail",
+      reason: "Could not write to database"
+    })
 
     rs.send({status: "success"})
   }) 
@@ -30,12 +37,23 @@ app.post("/api", (rq, rs) => {
 
 app.put("/api", (rq, rs) => {
   if(rq.body.id <= projects.length && rq.body.id > 0) {
+    const {title, description, url, ...rest} = rq.body
+    if(Object.keys(rest).length !== 0 || !title || !description || !url)
+      return rs.send({
+        status: "fail",
+        reason: "Keys title, description, url required; no more than that"
+      })
+
     projects[req.body.id - 1] = {
       ...projects[rq.body.id - 1],
       ...rq.body
     }
     rs.send({status: "success"})
-  } else rs.send({status: "fail"})
+  } else
+    rs.send({
+      status: "fail",
+      reason: "Invalid ID"
+    })
 })
 
 app.delete("/api", (rq, rs) => {
@@ -46,13 +64,19 @@ app.delete("/api", (rq, rs) => {
     })
 
     fs.writeFile("./projects.json5", JSON.stringify(projects), err => {
-      if(err) return rs.send({status: "fail"})
+      if(err)
+        return rs.send({
+          status: "fail",
+	  reason: "Could not write to database"
+	})
 
       rs.send({status: "success"})
     })
-  } else {
-    rs.send({status: "fail"})
-  }
+  } else
+    rs.send({
+      status: "fail",
+      reason: "Invalid ID"
+    })
 })
 
 app.listen(8000)
