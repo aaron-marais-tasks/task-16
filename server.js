@@ -21,8 +21,10 @@ app.post("/api", (rq, rs) => {
 
   const len = projects.length
   projects.push({
-    ...rq.body,
-    id: len + 1
+    id: len + 1,
+    title,
+    description,
+    url
   })
 
   fs.writeFile("./projects.json5", JSON.stringify(projects), err => {
@@ -38,7 +40,7 @@ app.post("/api", (rq, rs) => {
 app.put("/api", (rq, rs) => {
   if(rq.body.id <= projects.length && rq.body.id > 0) {
     const {title, description, url, ...rest} = rq.body
-    if(Object.keys(rest).length !== 0 || !title || !description || !url)
+    if(Object.keys(rest).length !== 0 || (!title && !description && !url))
       return rs.send({
         status: "fail",
         reason: "Keys title, description, url required; no more than that"
