@@ -1,0 +1,20 @@
+{
+  "name": "task-16",
+  "version": "1.0.0",
+  "description": "Aaron Marais Module 3 Task 16",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaron-marais-tasks/task-16.git"
+  },
+  "author": "Aaron Marais",
+  "license": "ISC",
+  "homepage": "https://github.com/aaron-marais-tasks/task-16#readme",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "json5": "^2.1.0",
+    "nodemon": "^1.19.2"
+  }
+}
