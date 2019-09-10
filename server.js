@@ -13,8 +13,12 @@ const fs = require("fs")
 const express = require("express")
 const app = express()
 
-// Use express JSON for body
+// Import CORS module to work for Task 17
+const cors = require("cors")
+
+// Use express JSON for body, and CORS requests
 app.use(express.json())
+app.use(cors())
 
 // Our GET call for API returns our project list
 app.get("/api", (rq, rs) => {
@@ -57,19 +61,29 @@ app.put("/api", (rq, rs) => {
   // Make sure if valid ID
   if(rq.body.id <= projects.length && rq.body.id > 0) {
     // Make sure that title, description or URL is available, and nothing else
-    const {title, description, url, ...rest} = rq.body
-    if(Object.keys(rest).length !== 0 || (!title && !description && !url))
+    const {id, title, description, url, ...rest} = rq.body
+    if(Object.keys(rest).length !== 0 || !id || (!title && !description && !url))
       return rs.send({
         status: "fail",
-        reason: "Keys title, description, url required; no more than that"
+        reason: "Key id and any keys being title, description, url required; no more than that"
       })
 
     // Update project using ID for key
-    projects[req.body.id - 1] = {
+    projects[rq.body.id - 1] = {
       ...projects[rq.body.id - 1],
       ...rq.body
     }
-    rs.send({status: "success"})
+
+    // Write the new array into our projects JSON file
+    fs.writeFile("./projects.json5", JSON.stringify(projects), err => {
+      // Error out if could noto write to file
+      if(err) return rs.send({
+        status: "fail",
+        reason: "Could not write to database"
+      })
+
+      rs.send({status: "success"})
+    })
   } else
     rs.send({
       status: "fail",
