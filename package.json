@@ -15,7 +15,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "json5": "^2.1.0",
+    "json5": "^2.2.2",
     "nodemon": "^1.19.2"
   }
 }
